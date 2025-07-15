@@ -1,0 +1,131 @@
+.course-container {
+  color: black;
+  display: flex;
+  justify-content: space-evenly;
+}
+.course-container .crs-page-img img {
+  width: 100%;
+}
+@media (max-width: 1200px) {
+  .course-container {
+    flex-direction: column;
+    width: 80%;
+    margin: 0 auto;
+  }
+}
+.title-framework {
+  text-shadow: 0px 7px 36px #00000096;
+  color: #3f3d56;
+  font-size: 2.3rem;
+}
+.course-card-body {
+  position: relative;
+}
+.course-card-body::before {
+  content: "";
+  position: absolute;
+  height: 2px;
+  width: 100%;
+  right: 0;
+  top: 45%;
+  background-color: #80808033;
+  z-index: -1;
+}
+.course-card-footer {
+  position: relative;
+}
+.course-card-footer::before {
+  content: "";
+  position: absolute;
+  height: 2px;
+  width: 100%;
+  right: 0;
+  top: 0;
+  background-color: #80808033;
+}
+
+.topic {
+  overflow: hidden;
+  border: 1px solid #80808066;
+  box-shadow: var(--boxShadow);
+  margin-bottom: 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+.topic h1 {
+  height: 100%;
+  padding-right: 30px;
+  font-size: 1.5rem;
+}
+
+.topic .topic-title {
+  display: flex;
+  justify-content: space-between;
+  background-color: #eff1f6;
+  align-items: center;
+}
+.topic .topic-title svg {
+  margin-left: 30px;
+  transform: rotate(-90deg);
+  transition: 0.3s;
+}
+.topic .topic-title svg.opened {
+  margin-left: 30px;
+  transform: rotate(0);
+}
+/* lessons */
+.topic .lessons {
+  max-height: 0;
+  transition: 1s ease-in-out;
+}
+.lessons.opened {
+  max-height: 54px;
+}
+.overlayConfrimMessage {
+  position: fixed;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  justify-content: center;
+  background-color: #00000066;
+}
+.confirmCard {
+  padding: 15px;
+  color: white;
+  width: 440px;
+  text-align: center;
+  background-color: #3f51b5;
+  border-radius: 17px;
+  box-shadow: 0px 0px 19px 6px #626262;
+  transition: 0.7s ease-in-out;
+}
+.confirmCard .btn {
+  cursor: pointer;
+  font-size: 20px;
+  transition: 0.3s;
+}
+.confirmCard .btn:hover {
+  background-color: #3e64de;
+  box-shadow: 0 0 5px 1px black;
+  color: white;
+}
+.confirmCard div {
+  display: flex;
+  justify-content: space-evenly;
+}
+
+.btn.-st1 {
+  background-color: #626262;
+  color: white;
+  margin-right: 20px;
+  cursor: pointer;
+}
+.footer {
+  opacity: 0;
+  transition: 1s ease-in-out;
+}
+.opactiy-active {
+  opacity: 1;
+}

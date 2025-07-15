@@ -1,0 +1,127 @@
+@import "tailwindcss";
+
+:root {
+  --mainColor: #071019;
+  --primary: #0c1c2d;
+
+  --secondary: #fba504;
+  --light: #f6f4f9;
+  --dark: #04000b;
+  --boxShadow: #00000026 0px 0 8px 1px;
+  --outlineBoxShadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+
+* {
+  direction: rtl;
+}
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@font-face {
+  font-family: "JozoorFont";
+
+  src: url("/src/assets/fonts/JozoorFont.otf") format("opentype");
+
+  /* url("./assets/fonts/jozoor.ttf") format("truetype"); */
+  font-weight: normal;
+  font-style: normal;
+}
+body {
+  font-family: "JozoorFont" !important;
+  direction: rtl;
+}
+
+.line {
+  width: 75px;
+  height: 4px;
+  background-color: #ce2f3b;
+  margin: 0 auto;
+}
+/* login page */
+.divider:after,
+.divider:before {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+.balance {
+  height: fit-content;
+  display: flex !important;
+  align-items: center;
+  font-size: 20px;
+}
+.iconBorder {
+  text-align: center;
+  box-shadow: 0px 0px 0px 1px #63e6be;
+  height: 50px;
+  aspect-ratio: 1/1;
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  border-radius: 300px;
+}
+.balance a {
+  background-color: #63e6be !important;
+  margin-right: 7px;
+  font-size: 16px;
+  padding: 4px;
+  text-decoration: none;
+  color: white;
+}
+.h-custom {
+  height: calc(100% - 73px);
+}
+@media (max-width: 450px) {
+  .h-custom {
+    height: 100%;
+  }
+}
+.form-control:focus {
+  color: var(--bs-body-color);
+  background-color: var(--bs-body-bg);
+  border-color: #86b7fe;
+  outline: 0;
+  box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+}
+.form-control {
+  transition: border-color 0.2s ease-in-out, box-shadow 0.15s ease-in-out;
+}
+.section-title {
+  text-align: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  text-transform: uppercase;
+  font-size: 40px;
+  color: var(--mainColor);
+  margin-bottom: 6rem;
+}
+.section-title span:first-child,
+.section-title span:last-child {
+  position: relative;
+  display: inline-block;
+  margin-right: 30px;
+  margin-left: 30px;
+  width: 30px;
+  background-color: var(--mainColor);
+  height: 2px;
+}
+.section-title span:last-child {
+}
+.section-title span:first-child::after,
+.section-title span:last-child::after {
+  position: absolute;
+  content: "";
+  width: 15px;
+  height: 2px;
+  top: 0;
+  right: -20px;
+  background-color: var(--mainColor);
+}
+.section-title span:last-child::after {
+  right: auto;
+  left: -20px;
+}
