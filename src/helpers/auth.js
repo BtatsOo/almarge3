@@ -6,7 +6,7 @@ export const authenticateUser = async (name, password) => {
   try {
     //  `${process.env.REACT_APP_SERVER_URL}/login`,
     const res = await axios.post(
-      `http://localhost:3000/login`,
+      `${import.meta.env.VITE_API_URL}/login`,
       {
         name,
         password,
@@ -36,7 +36,7 @@ export const createUser = async (
 ) => {
   try {
     const res = await axios.post(
-      `http://localhost:3000/register`,
+      `${import.meta.env.VITE_API_URL}/register`,
       {
         name,
         password,
@@ -70,7 +70,7 @@ export const createUser = async (
 // in backend (cookies)
 export const isAuthenticated = async () => {
   try {
-    const res = await axios.get(`http://localhost:3000/login`, {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/login`, {
       withCredentials: true,
     });
 
@@ -85,7 +85,7 @@ export const isAuthenticated = async () => {
 
 export const logOut = async () => {
   try {
-    const res = await axios.get(`${process.env.REACT_APP_SERVER_URL}/logout`, {
+    const res = await axios.get(`$${import.meta.env.VITE_API_URL}/logout`, {
       withCredentials: true,
     });
     console.log(res);
@@ -102,7 +102,7 @@ export const logOut = async () => {
 //  fetch courses data
 export const fetchData = async () => {
   try {
-    const res = await axios.get(`http://localhost:3000/courses`, {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/courses`, {
       withCredentials: true,
     });
     return res;
@@ -116,9 +116,12 @@ export const fetchData = async () => {
 
 export const fetchCourseDataEnrollment = async (id) => {
   try {
-    const res = await axios.get(`http://localhost:3000/courses/enroll/${id}`, {
-      withCredentials: true,
-    });
+    const res = await axios.get(
+      `${import.meta.env.VITE_API_URL}/courses/enroll/${id}`,
+      {
+        withCredentials: true,
+      }
+    );
 
     return res;
   } catch (error) {
@@ -129,7 +132,7 @@ export const fetchCourseDataEnrollment = async (id) => {
 export const enrolledCoursesFn = async () => {
   try {
     const data = await axios.get(
-      `http://localhost:3000/courses/enrolled-courses`,
+      `${import.meta.env.VITE_API_URL}/courses/enrolled-courses`,
       {
         withCredentials: true,
       }
