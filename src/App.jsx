@@ -11,7 +11,7 @@ import CourseOverview from "./pages/CourseOverview";
 import Homepage from "./pages/Homepage";
 import Profile from "./pages/Profile";
 import MyCourses from "./pages/MyCourses";
-import Transaction from "./pages/transaction";
+import Transaction from "./pages/Transaction";
 import { Result } from "./pages/Results";
 import Quiz from "./pages/Quiz";
 const queryClient = new QueryClient({
