@@ -8,7 +8,7 @@ import "./index.css";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 // import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 import CourseOverview from "./pages/CourseOverview";
-import Homepage from "./pages/homepage";
+import Homepage from "./pages/Homepage";
 import Profile from "./pages/Profile";
 import MyCourses from "./pages/MyCourses";
 import Transaction from "./pages/transaction";
