@@ -40,7 +40,7 @@ export const useEnroll = (id, onSuccessCallBack) => {
     queryFn: async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/courses/enroll/${id}`,
+          `https://api.almarge3.com/courses/enroll/${id}`,
           {
             withCredentials: true,
           }
