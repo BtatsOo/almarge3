@@ -33,7 +33,9 @@ function CourseOverview() {
   useEffect(function () {
     async function fetchData() {
       try {
-        const res = await fetch(`http://localhost:3000/courses/${id}`); //fetch() function does not throw an error on HTTP errors like 404 or 500
+        const res = await fetch(
+          `${import.meta.env.VITE_API_URL}/courses/${id}`
+        ); //fetch() function does not throw an error on HTTP errors like 404 or 500
         if (!res.ok) {
           throw new Error("Course not found");
         }
@@ -289,7 +291,7 @@ function ConfirmMessage({
   const handleUpdate = async () => {
     try {
       const response = await axios.patch(
-        `http://localhost:3000/courses/purchase/${courseData._id}`,
+        `${import.meta.env.VITE_API_URL}/courses/purchase/${courseData._id}`,
         {},
         {
           withCredentials: true,

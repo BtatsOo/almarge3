@@ -40,7 +40,7 @@ export const useEnroll = (id, onSuccessCallBack) => {
     queryFn: async () => {
       try {
         const res = await axios.get(
-          `http://localhost:3000/courses/enroll/${id}`,
+          `${import.meta.env.VITE_API_URL}/courses/enroll/${id}`,
           {
             withCredentials: true,
           }
