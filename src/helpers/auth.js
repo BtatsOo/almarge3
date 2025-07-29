@@ -85,7 +85,7 @@ export const isAuthenticated = async () => {
 
 export const logOut = async () => {
   try {
-    const res = await axios.get(`$${import.meta.env.VITE_API_URL}/logout`, {
+    const res = await axios.get(`${import.meta.env.VITE_API_URL}/logout`, {
       withCredentials: true,
     });
     console.log(res);

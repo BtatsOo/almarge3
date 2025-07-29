@@ -45,6 +45,7 @@ export const useEnroll = (id, onSuccessCallBack) => {
             withCredentials: true,
           }
         );
+        console.log(res);
 
         return res;
       } catch (error) {

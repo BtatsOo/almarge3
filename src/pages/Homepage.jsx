@@ -297,7 +297,7 @@ const Homepage = () => {
               message="يتم التحميل ..."
               color="blue"
             />
-          ) : (
+          ) : !isLoading && !isError ? (
             <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {data.map((course) => (
                 <div
@@ -372,6 +372,8 @@ const Homepage = () => {
                 </div>
               ))}
             </div>
+          ) : (
+            "error"
           )}
         </div>
       </section>

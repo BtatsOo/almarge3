@@ -3,6 +3,7 @@ import { NavLink, Outlet } from "react-router";
 import { useAuth } from "../helpers/useauth";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
+import { logOut } from "../helpers/auth";
 
 function Layout() {
   const { user = {}, auth } = useAuth();
@@ -19,7 +20,7 @@ function Layout() {
     { to: "/transaction", icon: "💳", label: "شحن الرصيد" },
     { divider: true },
     { to: "/help", icon: "🎧", label: "مركز المساعدة" },
-    { to: "/settings", icon: "⚙️", label: "الإعدادات" },
+    { to: location.pathname, icon: " 🚪", label: "تسجيل خروج " },
   ];
   const linksNotAuth = [
     { to: "/login", icon: "📁", label: " تسجيل الدخول" },
@@ -27,7 +28,7 @@ function Layout() {
     { to: "/browse", icon: "🌐", label: "استكشاف الدورات" },
     { divider: true },
     { to: "/help", icon: "🎧", label: "مركز المساعدة" },
-    { to: "/settings", icon: "⚙️", label: "الإعدادات" },
+    ,
   ];
 
   return (
@@ -92,6 +93,11 @@ function Layout() {
                         className={({ isActive }) =>
                           `${styles.navLink} ${isActive ? styles.active : ""}`
                         }
+                        onClick={() => {
+                          if (link.label === "تسجيل خروج ") {
+                            logOut();
+                          }
+                        }}
                       >
                         <span className={styles.icon}>{link.icon}</span>
                         {link.label}
@@ -103,7 +109,7 @@ function Layout() {
                       <div key={idx} className={styles.divider}></div>
                     ) : (
                       <NavLink
-                        key={link.to}
+                        key={link.label}
                         to={link.to}
                         className={({ isActive }) =>
                           `${styles.navLink} ${isActive ? styles.active : ""}`
