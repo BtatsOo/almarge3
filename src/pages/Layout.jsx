@@ -18,6 +18,7 @@ function Layout() {
     // { to: "/report", icon: "📊", label: "النتائج والتقارير" },
     { to: "/certificate", icon: "🎓", label: "نتائج الامتحانات" },
     { to: "/transaction", icon: "💳", label: "شحن الرصيد" },
+    { to: "/follow-up", icon: "🧠", label: " المتابعة النفسية" },
     { divider: true },
     { to: "/help", icon: "🎧", label: "مركز المساعدة" },
     { to: location.pathname, icon: " 🚪", label: "تسجيل خروج " },
@@ -28,7 +29,6 @@ function Layout() {
     { to: "/browse", icon: "🌐", label: "استكشاف الدورات" },
     { divider: true },
     { to: "/help", icon: "🎧", label: "مركز المساعدة" },
-    ,
   ];
 
   return (
@@ -88,10 +88,16 @@ function Layout() {
                       <div key={idx} className={styles.divider}></div>
                     ) : (
                       <NavLink
-                        key={link.to}
+                        key={link.label}
                         to={link.to}
                         className={({ isActive }) =>
-                          `${styles.navLink} ${isActive ? styles.active : ""}`
+                          `${styles.navLink} ${
+                            link.label === "تسجيل خروج "
+                              ? ""
+                              : isActive
+                              ? styles.active
+                              : ""
+                          }`
                         }
                         onClick={() => {
                           if (link.label === "تسجيل خروج ") {

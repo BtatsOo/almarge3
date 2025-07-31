@@ -112,7 +112,7 @@ const Homepage = () => {
         <div className="container mx-auto  py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center md:w-[30%] sm:w-[80%]  space-x-4 space-x-reverse justify-start">
-              <div className="bg-gradient-to-r text-white flex md:w-[140px] w-[100px] pl-4 rounded-lg">
+              <div className=" text-white flex md:w-[140px] w-[100px] pl-4 rounded-lg">
                 <img
                   className="rounded-[900px] md:w-full lg:w-full w-[100px] sm:w-[100px] "
                   src="https://i.postimg.cc/Px6rnLwh/Chat-GPT-Image-May-16-2025-04-58-59-PM.png"

@@ -194,14 +194,14 @@ export const Result = () => {
 
                   <div className="text-center p-4 bg-green-50 rounded-lg">
                     <div className="text-2xl font-bold text-green-600">
-                      {data.filter((q) => q.score >= 70).length}
+                      {data.filter((q) => q.score >= 50).length}
                     </div>
                     <div className="text-sm text-green-700">اختبارات ناجحة</div>
                   </div>
 
                   <div className="text-center p-4 bg-red-50 rounded-lg">
                     <div className="text-2xl font-bold text-red-600">
-                      {data.filter((q) => q.score < 70).length}
+                      {data.filter((q) => q.score < 50).length}
                     </div>
                     <div className="text-sm text-red-700">اختبارات راسبة</div>
                   </div>
