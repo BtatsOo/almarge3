@@ -75,11 +75,11 @@ const Browse = () => {
               return (
                 <div
                   key={course._id}
-                  className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
+                  className="bg-white rounded-xl h-fit shadow-sm border border-gray-200 overflow-hidden hover:shadow-md transition-shadow"
                 >
                   {/* Course Image */}
                   <div
-                    className="relative h-[380px] bg-cover bg-no-repeat bg-gradient-to-br from-blue-50 to-indigo-100"
+                    className="relative h-[380px]  bg-cover bg-no-repeat bg-gradient-to-br from-blue-50 to-indigo-100"
                     style={{ backgroundImage: `url(${course.featuredImage})` }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20"></div>
