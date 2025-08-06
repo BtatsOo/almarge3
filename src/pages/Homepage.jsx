@@ -304,15 +304,18 @@ const Homepage = () => {
                   key={course.id}
                   className="bg-white rounded-2xl shadow-xl overflow-hidden hover:shadow-2xl transition-shadow"
                 >
-                  <div className="relative">
-                    <img
-                      src={course.featuredImage}
-                      alt={course.title}
-                      className="w-full h-48 object-cover"
-                    />
-                    <div className="absolute top-4 right-4 bg-white px-3 py-1 rounded-full text-sm font-medium text-gray-700">
-                      {course.duration}
+                  <div
+                    className="relative h-[380px] bg-cover bg-no-repeat bg-gradient-to-br from-blue-50 to-indigo-100"
+                    style={{ backgroundImage: `url(${course.featuredImage})` }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-400/20 to-purple-400/20"></div>
+                    <div className="absolute top-4 left-4 flex items-center gap-2 bg-white/90 backdrop-blur-sm px-3 py-1 rounded-full text-sm">
+                      <Clock className="w-4 h-4 text-orange-500" />
+                      <span className="font-medium text-gray-700">
+                        {course.duration}
+                      </span>
                     </div>
+                    {/* Placeholder for actual course image */}
                   </div>
 
                   <div className="p-6 h-[550px] flex flex-col justify-between">
