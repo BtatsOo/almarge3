@@ -232,7 +232,7 @@ const Homepage = () => {
                       تسجيل الدخول
                     </Link>
                     <Link
-                      to="/register"
+                      to="/login"
                       className=" bg-blue-950 hover:to-purple-700 w-fit text-white px-4 lg:font-medium py-3 lg:px-8 rounded-xl shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
                     >
                       تسجيل

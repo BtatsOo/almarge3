@@ -23,7 +23,7 @@ function Layout() {
     { to: "/follow-up", icon: "🧠", label: " المتابعة النفسية" },
     { divider: true },
     { to: "/help", icon: "🎧", label: "مركز المساعدة" },
-    { to: location.pathname, icon: " 🚪", label: "تسجيل خروج " },
+    { to: "/", icon: " 🚪", label: "تسجيل خروج " },
   ];
   const linksNotAuth = [
     { to: "/login", icon: "📁", label: " تسجيل الدخول" },
