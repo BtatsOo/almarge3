@@ -18,7 +18,7 @@ import FollowUp from "./pages/FollowUp";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 0,
+      staleTime: 4 * 60 * 60,
     },
   },
 });

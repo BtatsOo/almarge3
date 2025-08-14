@@ -25,7 +25,7 @@ function Layout() {
   ];
   const linksNotAuth = [
     { to: "/login", icon: "📁", label: " تسجيل الدخول" },
-    { to: "/login/register", icon: "📚", label: "حساب جديد" },
+    { to: "/login", icon: "📚", label: "حساب جديد" },
     { to: "/browse", icon: "🌐", label: "استكشاف الدورات" },
     { divider: true },
     { to: "/help", icon: "🎧", label: "مركز المساعدة" },
