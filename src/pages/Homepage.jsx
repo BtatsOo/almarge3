@@ -210,13 +210,13 @@ const Homepage = () => {
                   الكورسات
                 </Link>
                 <Link
-                  to="/about"
+                  to="/"
                   className="text-gray-700 hover:text-blue-600 font-medium"
                 >
                   من نحن
                 </Link>
                 <Link
-                  to="/contact"
+                  to="/"
                   className="text-gray-700 hover:text-blue-600 font-medium "
                 >
                   اتصل بنا
