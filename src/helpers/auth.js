@@ -1,4 +1,5 @@
 // src/auth.js
+
 import axios from "axios";
 
 // Function to authenticate user
@@ -89,6 +90,7 @@ export const logOut = async () => {
       withCredentials: true,
     });
     console.log(res);
+
     return res;
   } catch (err) {
     return err;

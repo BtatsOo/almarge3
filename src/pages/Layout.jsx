@@ -4,9 +4,11 @@ import { useAuth } from "../helpers/useauth";
 import { useState } from "react";
 import { Menu, X } from "lucide-react";
 import { logOut } from "../helpers/auth";
+import { useQueryClient } from "@tanstack/react-query";
 
 function Layout() {
   const { user = {}, auth } = useAuth();
+  const queryclient = useQueryClient();
   console.log(user);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
@@ -101,7 +103,8 @@ function Layout() {
                         }
                         onClick={() => {
                           if (link.label === "تسجيل خروج ") {
-                            logOut();
+                            const res = logOut();
+                            if (res) queryclient.invalidateQueries();
                           }
                         }}
                       >
