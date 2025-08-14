@@ -52,6 +52,7 @@ export const useEnroll = (id, onSuccessCallBack) => {
         console.log(error);
       }
     },
+    staleTime: 24 * 60 * 60 * 1000,
     onSuccess: onSuccessCallBack,
   });
   return { data, isLoading, isError };

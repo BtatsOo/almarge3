@@ -112,6 +112,7 @@ export default function ArabicLoginRegister() {
         );
         if (token) {
           console.log(token);
+
           navigateIfSuccessLogin("/browse");
         }
       } catch (error1) {
