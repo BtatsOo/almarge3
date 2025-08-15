@@ -143,13 +143,13 @@ const Homepage = () => {
                 الكورسات
               </Link>
               <Link
-                to="/about"
+                to="/"
                 className="text-gray-700 hover:text-blue-600 font-medium"
               >
                 من نحن
               </Link>
               <Link
-                to="/contact"
+                to="/"
                 className="text-gray-700 hover:text-blue-600 font-medium "
               >
                 اتصل بنا
@@ -164,7 +164,7 @@ const Homepage = () => {
                     تسجيل الدخول
                   </Link>
                   <Link
-                    to="/register"
+                    to="/login"
                     className=" bg-blue-950 rounded-xl text-[1.2vw text-white md:px-2 lg:font-medium py-3 lg:px-8  shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 ease-in-out"
                   >
                     تسجيل
