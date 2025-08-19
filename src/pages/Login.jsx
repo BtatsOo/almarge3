@@ -26,8 +26,9 @@ export default function ArabicLoginRegister() {
     phoneNumber: "",
     guardianPhone: "",
     email: "",
+    class: "",
   });
-  console.log(formData);
+  console.log(formData.class);
   // Check Auth First
   const { data: { data } = {}, isLoading } = useAuth();
 
@@ -94,7 +95,8 @@ export default function ArabicLoginRegister() {
           formData.email,
           formData.phoneNumber,
           formData.governorate,
-          formData.guardianPhone
+          formData.guardianPhone,
+          formData.class
         );
         if (token) {
           console.log(token);
@@ -132,6 +134,7 @@ export default function ArabicLoginRegister() {
       phoneNumber: "",
       guardianPhone: "",
       email: "",
+      class: "",
     });
   };
   // useEffect(function () {
@@ -308,6 +311,47 @@ export default function ArabicLoginRegister() {
                                 {gov.label}
                               </option>
                             ))}
+                          </select>
+                          <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
+                            <ArrowRight className="w-4 h-4 text-gray-400 rotate-90" />
+                          </div>
+                        </div>
+                      </div>
+                      {/* class */}
+                      <div className="relative">
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">
+                          الصف الدراسي
+                        </label>
+                        <div className="relative">
+                          <GraduationCap className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 sm:w-5 h-4 sm:h-5" />
+                          <select
+                            name="class"
+                            value={formData.class}
+                            onChange={handleInputChange}
+                            required
+                            className="w-full pr-8 sm:pr-10 pl-4 py-2.5 sm:py-3 border-2 border-gray-200 rounded-xl focus:border-teal-500 focus:outline-none transition-all duration-200 text-right appearance-none cursor-pointer text-sm sm:text-base hover:border-gray-300"
+                          >
+                            <option key={""} value={""}>
+                              اختر الصف الدراسي
+                            </option>
+                            <option
+                              key={"الصف الثالث الثانوي"}
+                              value={"الصف الثالث الثانوي"}
+                            >
+                              الصف الثالث الثانوي
+                            </option>
+                            <option
+                              key={"الصف الثاني الثانوي"}
+                              value={"الصف الثاني الثانوي"}
+                            >
+                              الصف الثاني الثانوي
+                            </option>
+                            <option
+                              key={"الصف الاول الثانوي"}
+                              value={"الصف الاول الثانوي"}
+                            >
+                              الصف الأول الثانوي
+                            </option>
                           </select>
                           <div className="absolute left-3 top-1/2 transform -translate-y-1/2 pointer-events-none">
                             <ArrowRight className="w-4 h-4 text-gray-400 rotate-90" />

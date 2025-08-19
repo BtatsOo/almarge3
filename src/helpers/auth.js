@@ -33,7 +33,8 @@ export const createUser = async (
   email,
   phoneNumber,
   city,
-  guardianPhone
+  guardianPhone,
+  class1
 ) => {
   try {
     const res = await axios.post(
@@ -45,6 +46,7 @@ export const createUser = async (
         phoneNumber,
         guardianPhone,
         city,
+        class1,
       },
       {
         withCredentials: true,
