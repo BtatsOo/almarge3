@@ -423,7 +423,6 @@ function CourseComponent({ courseContentenrolled, selectedLesson, user }) {
               (window.playerCurrentTime / window.playerDuration) *
               100
             ).toFixed(2);
-            console.log(percentage, "percentage");
 
             checkpoints.forEach((cp) => {
               if (
@@ -432,18 +431,6 @@ function CourseComponent({ courseContentenrolled, selectedLesson, user }) {
                 !sentCheckpoints.includes(cp)
               ) {
                 sentCheckpoints.push(cp);
-                // console.log("Checkpoint:", cp, "%");
-
-                // send checkpoint
-                // fetch("/api/lessons/progress", {
-                //   method: "POST",
-                //   headers: { "Content-Type": "application/json" },
-                //   body: JSON.stringify({
-                //     lessonId,
-                //     checkpoint: cp,
-                //     watchedTime: Math.floor(watchedSeconds),
-                //   }),
-                // });
 
                 const checkpointsTobeSented = [5, 10, 20, 40, 50, 70, 80, 90];
 
@@ -460,7 +447,7 @@ function CourseComponent({ courseContentenrolled, selectedLesson, user }) {
                   try {
                     axios
                       .patch(
-                        "http://localhost:3000/checkpoint",
+                        `${import.meta.env.VITE_API_URL}/checkpoint`,
                         {
                           lessonId: selectedLesson._id,
                           timeDiff: diffHours,
@@ -497,7 +484,7 @@ function CourseComponent({ courseContentenrolled, selectedLesson, user }) {
 
   // Handle iframe load
   const handleIframeLoad = () => {
-    console.log("📺 Iframe loaded");
+    // console.log("📺 Iframe loaded");
     setIframeLoaded(true);
   };
 
@@ -811,7 +798,7 @@ function YouTubePlayerComponent({
                   try {
                     axios
                       .patch(
-                        "http://localhost:3000/checkpoint",
+                        `${import.meta.env.VITE_API_URL}/checkpoint`,
                         {
                           lessonId: selectedLesson._id,
                           timeDiff: diffHours,
