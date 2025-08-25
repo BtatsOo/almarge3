@@ -449,6 +449,7 @@ function CourseComponent({ courseContentenrolled, selectedLesson, user }) {
                           lessonId: selectedLesson._id,
                           timeDiff: diffHours,
                           checkpointArray: sentCheckpoints,
+                          lessonName: selectedLesson.title,
                         },
                         {
                           headers: { "Content-Type": "application/json" },
@@ -802,6 +803,7 @@ function YouTubePlayerComponent({
                           lessonId: selectedLesson._id,
                           timeDiff: diffHours,
                           checkpointArray: sentCheckpoints,
+                          lessonName: selectedLesson.title,
                         },
                         {
                           headers: { "Content-Type": "application/json" },
