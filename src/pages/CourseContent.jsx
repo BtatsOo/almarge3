@@ -12,8 +12,6 @@ function CourseContent() {
   // const { data: { data } = {}, isLoading } = useAuth();
   const { id } = useParams();
   const { data: { courseContentenrolled } = {}, isLoading } = useEnroll(id);
-  console.log(courseContentenrolled);
-  // const {}
 
   const [selectedLesson, setSelectedLesson] = useState({});
   useEffect(() => {
@@ -168,7 +166,6 @@ export function CourseList({ courseContentenrolled, setSelectedLesson }) {
   const initializeExpandedState = (sections) => {
     const initialState = {};
     sections?.forEach((section) => {
-      console.log(section._id);
       initialState[section._id] = section._id === "6867ddf313f7e7d75507f2ed"; // Only first section is true (01:true) and  expanded by default
     });
     return initialState;
@@ -177,7 +174,7 @@ export function CourseList({ courseContentenrolled, setSelectedLesson }) {
     const initialState = initializeExpandedState(
       courseContentenrolled?.content
     );
-    console.log(initialState);
+    // console.log(initialState);
     setExpandedSections(initialState);
   }, [courseContentenrolled]);
 
@@ -458,7 +455,9 @@ function CourseComponent({ courseContentenrolled, selectedLesson, user }) {
                           withCredentials: true,
                         }
                       )
-                      .then((res) => console.log(res))
+                      .then((res) => {
+                        // console.log(res)
+                      })
                       .catch((error) => console.error(error));
                   } catch (error) {
                     console.error(error);
@@ -809,7 +808,9 @@ function YouTubePlayerComponent({
                           withCredentials: true,
                         }
                       )
-                      .then((res) => console.log(res))
+                      .then((res) => {
+                        // console.log(res)
+                      })
                       .catch((error) => console.error(error));
                   } catch (error) {
                     console.error(error);
