@@ -1,31 +1,13 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Play, Clock, Users, Star } from "lucide-react";
 import { useAuth, useEnroll } from "../helpers/useauth";
 import { useNavigate, useParams } from "react-router";
 import { LoadingComponent } from "./Loading";
-const courseInfo = {
-  title: "Figma from A to Z",
-  category: "UI / UX Design",
-  lessons: 38,
-  duration: "4h 30min",
-  rating: 4.9,
-  reviews: 126,
-  description: [
-    "Unlock the power of Figma, the leading collaborative design tool, with our comprehensive online course. Whether you're a novice or looking to enhance your skills, this course will guide you through Figma's robust features and workflows.",
-    "Perfect for UI/UX designers, product managers, and anyone interested in modern design tools. Join us to elevate your design skills and boost your productivity with Figma!",
-  ],
-  learningPoints: [
-    "Setting up the environment",
-    "Advanced HTML Practices",
-    "Build a portfolio website",
-    "Responsive Design",
-    "Understand HTML Programming",
-    "Code HTML",
-    "Start building beautiful websites",
-  ],
-};
+import axios from "axios";
 
 function CourseContent() {
+  const { user = {}, auth } = useAuth();
+
   // check auth
   // const { data: { data } = {}, isLoading } = useAuth();
   const { id } = useParams();
@@ -78,10 +60,20 @@ function CourseContent() {
       <div className="flex flex-col md:items-start justify-start items-center bg-gray-100  md:flex-row md:justify-between">
         {courseContentenrolled || selectedLesson ? (
           <>
-            <CourseComponent
-              courseContentenrolled={courseContentenrolled}
-              selectedLesson={selectedLesson}
-            />
+            {selectedLesson?.url.includes("youtube.com") ? (
+              <YouTubePlayerComponent
+                courseContentenrolled={courseContentenrolled}
+                selectedLesson={selectedLesson}
+                user={user}
+              />
+            ) : (
+              <CourseComponent
+                courseContentenrolled={courseContentenrolled}
+                selectedLesson={selectedLesson}
+                user={user}
+              />
+            )}
+
             <CourseList
               courseContentenrolled={courseContentenrolled}
               setSelectedLesson={setSelectedLesson}
@@ -318,40 +310,581 @@ export function CourseList({ courseContentenrolled, setSelectedLesson }) {
     </div>
   );
 }
-function CourseComponent({ courseContentenrolled, selectedLesson }) {
-  const [activeTab, setActiveTab] = useState("Overview");
-
+function CourseComponent({ courseContentenrolled, selectedLesson, user }) {
+  const [activeTab, setActiveTab] = useState("عن الكورس");
   const tabs = ["عن الكورس", "روابط وملاحظات", "التقييمات", "عن مقدم الكورس"];
+  const iframeRef = useRef(null);
+  const playerRef = useRef(null);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [iframeLoaded, setIframeLoaded] = useState(false);
+  const watchedLessonIfExist =
+    user.watchedLessons && selectedLesson
+      ? user?.watchedLessons?.filter((wl) => {
+          return wl.lessonId == selectedLesson._id;
+        })[0]
+      : null;
+  const lastDate = watchedLessonIfExist
+    ? watchedLessonIfExist?.sessions[watchedLessonIfExist?.sessions.length - 1]
+        .At
+    : 0; //get the  date of last session !
+  // console.log(lastDate, "lastDate");
+  // playback control api system
+
+  let watchedSeconds = 0;
+  let lastUpdate = 0;
+  let sentCheckpoints = [];
+
+  // check points من 5% لحد 100%
+  const checkpoints = Array.from({ length: 20 }, (_, i) => (i + 1) * 5);
+
+  // Clean up player on unmount or lesson change
+  const cleanupPlayer = () => {
+    if (playerRef.current) {
+      try {
+        // Remove all event listeners if the API supports it
+        playerRef.current.off?.();
+        playerRef.current = null;
+      } catch (error) {
+        console.warn("Error cleaning up player:", error);
+        playerRef.current = null;
+      }
+    }
+  };
+
+  // 1) Load player.js script ONCE
+  useEffect(() => {
+    // Check if script already exists
+    const existingScript = document.querySelector('script[src*="playerjs"]');
+    if (existingScript) {
+      setScriptLoaded(true);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.src =
+      "https://assets.mediadelivery.net/playerjs/playerjs-latest.min.js";
+    script.async = true;
+    script.onload = () => {
+      console.log("✅ Player.js script loaded");
+      setScriptLoaded(true);
+    };
+    script.onerror = () => {
+      console.error("❌ Failed to load Player.js script");
+    };
+
+    document.head.appendChild(script);
+
+    return () => {
+      // Don't remove the script on unmount as it might be used by other components
+      cleanupPlayer();
+    };
+  }, []);
+
+  // 2) Initialize player when both script and iframe are ready
+  useEffect(() => {
+    if (!scriptLoaded || !iframeLoaded || !iframeRef.current) {
+      return;
+    }
+
+    // Clean up previous player instance
+    cleanupPlayer();
+
+    // Small delay to ensure iframe is fully rendered
+    const timer = setTimeout(() => {
+      if (window.playerjs && iframeRef.current && !playerRef.current) {
+        try {
+          const player = new window.playerjs.Player(iframeRef.current);
+          playerRef.current = player;
+
+          player.on("timeupdate", () => {
+            player.getCurrentTime(
+              (value) => (window.playerCurrentTime = value)
+            );
+            player.getDuration((value) => {
+              window.playerDuration = value;
+            });
+            // console.log(window.playerDuration);
+            // console.log(window.playerCurrentTime);
+            // console.log(duration, currentTime);
+
+            // ✅ عداد الوقت الفعلي
+            const now = Date.now();
+            if (lastUpdate) {
+              const diff = (now - lastUpdate) / 1000;
+              // if (!player.paused()) {
+              watchedSeconds += diff;
+              // console.log(watchedSeconds);
+              // }
+            }
+            lastUpdate = now;
+
+            // ✅ checkpoints
+            const percentage = (
+              (window.playerCurrentTime / window.playerDuration) *
+              100
+            ).toFixed(2);
+            console.log(percentage, "percentage");
+
+            checkpoints.forEach((cp) => {
+              if (
+                percentage <= cp + 0.01 &&
+                percentage >= cp - 0.01 &&
+                !sentCheckpoints.includes(cp)
+              ) {
+                sentCheckpoints.push(cp);
+                // console.log("Checkpoint:", cp, "%");
+
+                // send checkpoint
+                // fetch("/api/lessons/progress", {
+                //   method: "POST",
+                //   headers: { "Content-Type": "application/json" },
+                //   body: JSON.stringify({
+                //     lessonId,
+                //     checkpoint: cp,
+                //     watchedTime: Math.floor(watchedSeconds),
+                //   }),
+                // });
+
+                const checkpointsTobeSented = [5, 10, 20, 40, 50, 70, 80, 90];
+
+                const now = new Date();
+                const diffMs = now.getTime() - new Date(lastDate).getTime();
+                const diffHours = diffMs / (1000 * 60 * 60);
+
+                // console.log("percentage", percentage, "cp", cp);
+                console.log(diffHours, "timeDiff");
+
+                if (checkpointsTobeSented.includes(cp)) {
+                  console.log(diffHours);
+
+                  try {
+                    axios
+                      .patch(
+                        "http://localhost:3000/checkpoint",
+                        {
+                          lessonId: selectedLesson._id,
+                          timeDiff: diffHours,
+                          checkpointArray: sentCheckpoints,
+                        },
+                        {
+                          headers: { "Content-Type": "application/json" },
+                          withCredentials: true,
+                        }
+                      )
+                      .then((res) => console.log(res))
+                      .catch((error) => console.error(error));
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }
+              }
+            });
+          });
+
+          player.on("error", (error) => {
+            console.error("❌ Player error:", error);
+          });
+        } catch (error) {
+          console.error("❌ Error initializing player:", error);
+        }
+      }
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [scriptLoaded, iframeLoaded, selectedLesson?.url]);
+
+  // Handle iframe load
+  const handleIframeLoad = () => {
+    console.log("📺 Iframe loaded");
+    setIframeLoaded(true);
+  };
+
+  // Reset iframe loaded state when URL changes
+  useEffect(() => {
+    setIframeLoaded(false);
+    cleanupPlayer();
+  }, [selectedLesson?.url]);
+
+  // Cleanup on unmount when component is destroyed (unamouny)
+  useEffect(() => {
+    return () => {
+      cleanupPlayer();
+    };
+  }, []);
 
   return (
     <div className="bg-gray-100 md:min-h-screen flex items-start justify-center p-4 pt-1 w-full">
       <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-3xl w-full h-full">
-        {/* Header with back button and title */}
-
-        {/* Video thumbnail */}
-        <div className="relative w-[100%]">
+        {/* Video Player */}
+        <div className="relative w-full">
           <div className="bg-gray-200 aspect-video relative">
-            {/* Video thumbnail */}
-            <div className="relative w-full">
-              <div className="bg-gray-200 aspect-video relative">
-                <div className="relative w-full aspect-video">
-                  <div style={{ position: "relative", paddingTop: "56.25%" }}>
-                    <iframe
-                      src={selectedLesson?.url}
-                      loading="lazy"
-                      style={{
-                        border: 0,
-                        position: "absolute",
-                        top: 0,
-                        height: "100%",
-                        width: "100%",
-                      }}
-                      allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
-                      allowFullScreen
-                    ></iframe>
-                  </div>
+            <div style={{ position: "relative", paddingTop: "56.25%" }}>
+              {selectedLesson?.url ? (
+                <iframe
+                  ref={iframeRef}
+                  src={selectedLesson.url}
+                  onLoad={handleIframeLoad}
+                  style={{
+                    border: 0,
+                    position: "absolute",
+                    top: 0,
+                    height: "100%",
+                    width: "100%",
+                  }}
+                  allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture"
+                  allowFullScreen
+                  title="Video Player"
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-gray-500">
+                  No video selected
                 </div>
-              </div>
+              )}
+            </div>
+          </div>
+        </div>
+        {/* Navigation tabs */}
+        <div className="border-b flex">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              className={`px-4 py-3 text-sm font-medium cursor-pointer ${
+                activeTab === tab
+                  ? "text-blue-600 border-b-2 border-blue-600"
+                  : "text-gray-600 hover:text-gray-900"
+              }`}
+              onClick={() => setActiveTab(tab)}
+            >
+              {tab}
+            </button>
+          ))}
+        </div>
+        {/* Content section */}
+        <div className="p-6 max-h-full">
+          {activeTab === "عن الكورس" && (
+            <div>
+              <h2 className="text-lg font-semibold mb-3">عن الكورس</h2>
+              <p className="text-gray-700 mb-4 text-sm">
+                {courseContentenrolled?.description || "لا يوجد وصف للكورس"}
+              </p>
+            </div>
+          )}
+
+          {activeTab === "روابط وملاحظات" && (
+            <div className="text-center py-8">
+              <p>ستظهر هنا الروابط المهمة</p>
+            </div>
+          )}
+
+          {activeTab === "التقييمات" && (
+            <div className="text-center py-8">
+              <p>Student reviews would appear here</p>
+            </div>
+          )}
+
+          {activeTab === "عن مقدم الكورس" && (
+            <div className="text-center py-8">
+              <p>مقدم الكورس م/ محمد شريف</p>
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+function YouTubePlayerComponent({
+  courseContentenrolled,
+  selectedLesson,
+  user,
+}) {
+  const [activeTab, setActiveTab] = useState("عن الكورس");
+  const tabs = ["عن الكورس", "روابط وملاحظات", "التقييمات", "عن مقدم الكورس"];
+  const playerRef = useRef(null);
+  const [scriptLoaded, setScriptLoaded] = useState(false);
+  const [playerReady, setPlayerReady] = useState(false);
+  const progressIntervalRef = useRef(null);
+  const watchedLessonIfExist =
+    user.watchedLessons && selectedLesson
+      ? user?.watchedLessons?.filter((wl) => {
+          return wl.lessonId == selectedLesson._id;
+        })[0]
+      : null;
+  const lastDate = watchedLessonIfExist
+    ? watchedLessonIfExist?.sessions[watchedLessonIfExist?.sessions.length - 1]
+        .At
+    : 0; //get the  date of last session !
+  // Progress tracking variables
+  let watchedSeconds = 0;
+  let lastUpdate = 0;
+  let sentCheckpoints = [];
+
+  // Checkpoints from 5% to 100%
+  const checkpoints = Array.from({ length: 20 }, (_, i) => (i + 1) * 5);
+
+  // Extract YouTube video ID
+  const extractYouTubeId = (url) => {
+    if (!url) return null;
+    const match = url.match(
+      /(?:youtube\.com\/watch\?v=|youtu\.be\/|youtube\.com\/embed\/)([^&\n?#]+)/
+    );
+    return match ? match[1] : null;
+  };
+
+  // Clean up player on unmount or lesson change
+  const cleanupPlayer = () => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+
+    if (playerRef.current && playerRef.current.destroy) {
+      try {
+        playerRef.current.destroy();
+        playerRef.current = null;
+      } catch (error) {
+        console.warn("Error cleaning up YouTube player:", error);
+        playerRef.current = null;
+      }
+    }
+    setPlayerReady(false);
+  };
+
+  // 1) Load YouTube API script ONCE
+  useEffect(() => {
+    // Check if script already exists or API is already loaded
+    if (window.YT && window.YT.Player) {
+      setScriptLoaded(true);
+      return;
+    }
+
+    const existingScript = document.querySelector(
+      'script[src*="youtube.com/iframe_api"]'
+    );
+    if (existingScript) {
+      // Script exists but might not be loaded yet, wait for it
+      const checkYT = setInterval(() => {
+        if (window.YT && window.YT.Player) {
+          setScriptLoaded(true);
+          clearInterval(checkYT);
+        }
+      }, 100);
+      return () => clearInterval(checkYT);
+    }
+
+    // Load YouTube API
+    const script = document.createElement("script");
+    script.src = "https://www.youtube.com/iframe_api";
+    script.async = true;
+
+    // YouTube API requires global callback
+    window.onYouTubeIframeAPIReady = () => {
+      // console.log("✅ YouTube API loaded");
+      setScriptLoaded(true);
+    };
+
+    document.head.appendChild(script);
+
+    return () => {
+      cleanupPlayer();
+    };
+  }, []);
+
+  // 2) Initialize YouTube player when script is ready
+  useEffect(() => {
+    if (!scriptLoaded || !selectedLesson?.url) {
+      return;
+    }
+
+    const videoId = extractYouTubeId(selectedLesson.url);
+    if (!videoId) {
+      console.error("❌ Invalid YouTube URL:", selectedLesson.url);
+      return;
+    }
+
+    // Clean up previous player instance
+    cleanupPlayer();
+
+    // Small delay to ensure DOM is ready
+    const timer = setTimeout(() => {
+      if (window.YT && window.YT.Player && !playerRef.current) {
+        try {
+          const player = new window.YT.Player("youtube-player", {
+            videoId: videoId,
+            playerVars: {
+              autoplay: 0,
+              controls: 1,
+              rel: 0,
+              modestbranding: 1,
+            },
+            events: {
+              onReady: (event) => {
+                playerRef.current = event.target;
+                setPlayerReady(true);
+              },
+              onStateChange: (event) => {
+                handleStateChange(event);
+              },
+              onError: (error) => {
+                console.error("❌ YouTube Player error:", error);
+              },
+            },
+          });
+        } catch (error) {
+          console.error("❌ Error initializing YouTube player:", error);
+        }
+      }
+    }, 100);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [scriptLoaded, selectedLesson?.url]);
+
+  // Handle YouTube player state changes
+  const handleStateChange = (event) => {
+    const state = event.data;
+
+    if (state === window.YT.PlayerState.PLAYING) {
+      // console.log("▶️ YouTube Playing");
+      startProgressTracking();
+    } else if (state === window.YT.PlayerState.PAUSED) {
+      // console.log("⏸️ YouTube Paused");
+      stopProgressTracking();
+    } else if (state === window.YT.PlayerState.ENDED) {
+      // console.log("🏁 YouTube Video ended");
+      stopProgressTracking();
+    }
+  };
+
+  // Start progress tracking
+  const startProgressTracking = () => {
+    if (progressIntervalRef.current) return; // Already tracking
+
+    progressIntervalRef.current = setInterval(() => {
+      if (
+        playerRef.current &&
+        playerRef.current.getCurrentTime &&
+        playerRef.current.getDuration
+      ) {
+        try {
+          const currentTime = playerRef.current.getCurrentTime();
+          const duration = playerRef.current.getDuration();
+
+          if (duration > 0) {
+            // Store in window for debugging (like your original code)
+            window.playerCurrentTime = currentTime;
+            window.playerDuration = duration;
+
+            // ✅ Track actual watched time
+            const now = Date.now();
+            if (lastUpdate) {
+              const diff = (now - lastUpdate) / 1000;
+              watchedSeconds += diff;
+            }
+            lastUpdate = now;
+
+            // ✅ checkpoints
+            const percentage = (
+              (window.playerCurrentTime / window.playerDuration) *
+              100
+            ).toFixed(2);
+            // console.log(percentage);
+
+            checkpoints.forEach((cp) => {
+              if (
+                percentage <= cp + 0.01 &&
+                percentage >= cp - 0.01 &&
+                !sentCheckpoints.includes(cp)
+              ) {
+                // console.log(cp);
+                sentCheckpoints.push(cp);
+
+                const checkpointsTobeSented = [5, 10, 20, 40, 50, 70, 80, 90];
+
+                const now = new Date();
+                const diffMs = now.getTime() - new Date(lastDate).getTime();
+                const diffHours = diffMs / (1000 * 60 * 60);
+
+                if (checkpointsTobeSented.includes(cp)) {
+                  try {
+                    axios
+                      .patch(
+                        "http://localhost:3000/checkpoint",
+                        {
+                          lessonId: selectedLesson._id,
+                          timeDiff: diffHours,
+                          checkpointArray: sentCheckpoints,
+                        },
+                        {
+                          headers: { "Content-Type": "application/json" },
+                          withCredentials: true,
+                        }
+                      )
+                      .then((res) => console.log(res))
+                      .catch((error) => console.error(error));
+                  } catch (error) {
+                    console.error(error);
+                  }
+                }
+              }
+            });
+          }
+        } catch (error) {
+          console.error("Error tracking progress:", error);
+        }
+      }
+    }, 1000); // Update every 2 second
+  };
+
+  // Stop progress tracking
+  const stopProgressTracking = () => {
+    if (progressIntervalRef.current) {
+      clearInterval(progressIntervalRef.current);
+      progressIntervalRef.current = null;
+    }
+  };
+
+  // Reset progress when lesson changes
+  useEffect(() => {
+    // Reset tracking variables
+    watchedSeconds = 0;
+    lastUpdate = 0;
+    sentCheckpoints = [];
+    cleanupPlayer();
+  }, [selectedLesson?.url]);
+
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      cleanupPlayer();
+    };
+  }, []);
+
+  return (
+    <div className="bg-gray-100 md:min-h-screen flex items-start justify-center p-4 pt-1 w-full">
+      <div className="bg-white rounded-lg shadow-lg overflow-hidden max-w-3xl w-full h-full">
+        {/* Video Player */}
+        <div className="relative w-full">
+          <div className="bg-gray-200 aspect-video relative">
+            <div style={{ position: "relative", paddingTop: "56.25%" }}>
+              {selectedLesson?.url ? (
+                <div
+                  id="youtube-player"
+                  style={{
+                    position: "absolute",
+                    top: 0,
+                    left: 0,
+                    width: "100%",
+                    height: "100%",
+                  }}
+                />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center text-gray-500">
+                  No video selected
+                </div>
+              )}
             </div>
           </div>
         </div>
@@ -377,37 +910,10 @@ function CourseComponent({ courseContentenrolled, selectedLesson }) {
         <div className="p-6 max-h-full">
           {activeTab === "عن الكورس" && (
             <div>
-              <h2 className="text-lg  font-semibold  mb-3">عن الكورس</h2>
-              {/* {courseInfo.description.map((paragraph, index) => (
-                <p key={index} className="text-gray-700 mb-4 text-sm">
-                  {paragraph}
-                </p>
-              ))} */}
+              <h2 className="text-lg font-semibold mb-3">عن الكورس</h2>
               <p className="text-gray-700 mb-4 text-sm">
-                {courseContentenrolled.description}
+                {courseContentenrolled?.description || "لا يوجد وصف للكورس"}
               </p>
-
-              {/* <h2 className="text-lg font-semibold mt-6 mb-4">
-                What You'll Learn
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-2">
-                {courseInfo.learningPoints.map((point, index) => (
-                  <div key={index} className="flex items-start">
-                    <svg
-                      className="w-5 h-5 text-green-500 mr-2 mt-0.5"
-                      viewBox="0 0 20 20"
-                      fill="currentColor"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                    <span className="text-gray-700 text-sm">{point}</span>
-                  </div>
-                ))}
-              </div> */}
             </div>
           )}
 
@@ -422,6 +928,7 @@ function CourseComponent({ courseContentenrolled, selectedLesson }) {
               <p>Student reviews would appear here</p>
             </div>
           )}
+
           {activeTab === "عن مقدم الكورس" && (
             <div className="text-center py-8">
               <p>مقدم الكورس م/ محمد شريف</p>

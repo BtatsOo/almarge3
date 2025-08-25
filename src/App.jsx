@@ -15,6 +15,7 @@ import Transaction from "./pages/Transaction";
 import { Result } from "./pages/Results";
 import Quiz from "./pages/Quiz";
 import FollowUp from "./pages/FollowUp";
+import Test from "./pages/test";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -41,6 +42,7 @@ function App() {
             <Route path="/certificate/" element={<Result />} />
             <Route path="/courses/:id/quiz/:lessonId" element={<Quiz />} />
             <Route path="/follow-up" element={<FollowUp />} />
+            <Route path="/test" element={<Test />} />
 
             {/* <Route path="/browse" element={<Browse />} />
         <Route path="/courses/:id" element={<Course />} />

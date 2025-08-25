@@ -28,7 +28,7 @@ export default function ArabicLoginRegister() {
     email: "",
     class: "",
   });
-  console.log(formData.class);
+  // console.log(formData.class);
   // Check Auth First
   const { data: { data } = {}, isLoading } = useAuth();
 
@@ -339,6 +339,12 @@ export default function ArabicLoginRegister() {
                               value={"الصف الثالث الثانوي"}
                             >
                               الصف الثالث الثانوي
+                            </option>
+                            <option
+                              key={"الصف الثالث الثانوي سنتر"}
+                              value={"الصف الثالث الثانوي center"}
+                            >
+                              الصف الثالث الثانوي (طلبة السنتر فقط )
                             </option>
                             <option
                               key={"الصف الثاني الثانوي"}
