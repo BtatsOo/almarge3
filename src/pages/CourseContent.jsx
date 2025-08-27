@@ -432,7 +432,9 @@ function CourseComponent({ courseContentenrolled, selectedLesson, user }) {
                 const checkpointsTobeSented = [5, 10, 20, 40, 50, 70, 80, 90];
 
                 const now = new Date();
-                const diffMs = now.getTime() - new Date(lastDate).getTime();
+                const diffMs = lastDate
+                  ? now.getTime() - new Date(lastDate).getTime()
+                  : 0;
                 const diffHours = diffMs / (1000 * 60 * 60);
 
                 // console.log("percentage", percentage, "cp", cp);
@@ -791,7 +793,9 @@ function YouTubePlayerComponent({
                 const checkpointsTobeSented = [5, 10, 20, 40, 50, 70, 80, 90];
 
                 const now = new Date();
-                const diffMs = now.getTime() - new Date(lastDate).getTime();
+                const diffMs = lastDate
+                  ? now.getTime() - new Date(lastDate).getTime()
+                  : 0;
                 const diffHours = diffMs / (1000 * 60 * 60);
 
                 if (checkpointsTobeSented.includes(cp)) {
