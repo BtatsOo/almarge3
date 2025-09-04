@@ -16,6 +16,7 @@ import { Result } from "./pages/Results";
 import Quiz from "./pages/Quiz";
 import FollowUp from "./pages/FollowUp";
 import Test from "./pages/test";
+import ResetPassword from "./pages/ResetPassword";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -30,7 +31,11 @@ function App() {
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="/login" element={<Login />} />
+          <Route path="login">
+            <Route index element={<Login />} /> {/* /login */}
+            <Route path="reset" element={<ResetPassword />} />
+            {/* /login/reset */}
+          </Route>
           {/* عايزين هنا نخلي الصفحة الرئيسية مفهاش القائمة اللي على الشمال ولما تسجل بس تظهر للمسجل دخوله وكمان تخليها تقدر تفتحها وتقفلها  */}{" "}
           <Route path="/" element={<Layout />}>
             <Route path="/browse/" element={<Browse />} />

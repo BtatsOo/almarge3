@@ -11,7 +11,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import { authenticateUser, createUser, isAuthenticated } from "../helpers/auth";
-import { useNavigate } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { useAuth } from "../helpers/useauth";
 
 export default function ArabicLoginRegister() {
@@ -64,6 +64,15 @@ export default function ArabicLoginRegister() {
     { value: "جنوب سيناء", label: "جنوب سيناء" },
   ];
   const handleInputChange = (e) => {
+    // console.log(e.target.name === "password");
+    // console.log(/\s/.test(e.target.value));
+    if (e.target.name === "password" && /\s/.test(e.target.value)) {
+      setError("space not allowed in password");
+      // console.log(error);
+    } else {
+      setError("");
+    }
+
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -86,12 +95,14 @@ export default function ArabicLoginRegister() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    const cleanedTargetName = formData.username.trim();
+    const cleanedTargetPassword = formData.password.trim();
 
     if (isRegisterMode) {
       try {
         const token = await createUser(
-          formData.username,
-          formData.password,
+          cleanedTargetName,
+          cleanedTargetPassword,
           formData.email,
           formData.phoneNumber,
           formData.governorate,
@@ -109,8 +120,8 @@ export default function ArabicLoginRegister() {
     } else {
       try {
         const token = await authenticateUser(
-          formData.username,
-          formData.password
+          cleanedTargetName,
+          cleanedTargetPassword
         );
         if (token) {
           console.log(token);
@@ -118,7 +129,7 @@ export default function ArabicLoginRegister() {
           navigateIfSuccessLogin("/browse");
         }
       } catch (error1) {
-        console.log(error1);
+        console.log("error", error1);
         setError(error1.message);
       }
     }
@@ -136,6 +147,7 @@ export default function ArabicLoginRegister() {
       email: "",
       class: "",
     });
+    setError("");
   };
   // useEffect(function () {
   //   async function kofta() {
@@ -287,6 +299,20 @@ export default function ArabicLoginRegister() {
                         required
                       />
                     </div>
+                    <p className="text-sm text-red-600 mt-2 mb-0 no-underline">
+                      {error ===
+                      "Student validation failed: city: Path `city` is required."
+                        ? "ادخل المحافظة من فضلك !"
+                        : error == "Invalid UserName"
+                        ? "الاسم الذي ادخلته خطأ اكتب الاسم بشكل صحيح"
+                        : error === "Invalid username or password"
+                        ? "كلمة المرور التي ادخلتها غير صحيحة برجاء ادخال كلمة المرور بشكل صحيح او اضغط على نسيت كلمة المرور في حال نسيانها !"
+                        : error === "space not allowed in password"
+                        ? "غير مسموح بادخال مسافات في كلمة المرور !"
+                        : error
+                        ? "حدث خطأ ما، الرجاء المحاولة مرة أخرى !"
+                        : ""}
+                    </p>
                   </div>
 
                   {/* Registration fields - shown only in register mode */}
@@ -428,6 +454,8 @@ export default function ArabicLoginRegister() {
                           ? "هذا الاسم موجود بالفعل جرب اسما اخر !"
                           : error.includes("E11000") && error.includes("email")
                           ? "هذا الايميل موجود بالفعل جرب ايميل اخر !"
+                          : error === "space not allowed in password"
+                          ? "غير مسموح بادخال مسافات في كلمة المرور !"
                           : error
                           ? "حدث خطأ ما، الرجاء المحاولة مرة أخرى !"
                           : ""}
@@ -446,12 +474,12 @@ export default function ArabicLoginRegister() {
                   {/* Additional Links */}
                   <div className="text-center space-y-2 sm:space-y-3 pt-3 sm:pt-4">
                     {!isRegisterMode && (
-                      <a
-                        href="#"
+                      <Link
+                        to="/login/reset"
                         className="text-teal-600 hover:text-teal-800 text-sm font-medium transition-colors duration-200 block hover:underline"
                       >
                         نسيت كلمة المرور؟
-                      </a>
+                      </Link>
                     )}
                     <div className="text-gray-600 text-sm">
                       {isRegisterMode
