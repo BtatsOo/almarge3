@@ -1,17 +1,27 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Play, Clock, Users, Star } from "lucide-react";
 import { useAuth, useEnroll } from "../helpers/useauth";
-import { useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams } from "react-router";
 import { LoadingComponent } from "./Loading";
 import axios from "axios";
+import { MessageTitle } from "./CourseOverview";
 
 function CourseContent() {
   const { user = {}, auth } = useAuth();
+  console.log(auth);
 
   // check auth
   // const { data: { data } = {}, isLoading } = useAuth();
   const { id } = useParams();
-  const { data: { courseContentenrolled } = {}, isLoading } = useEnroll(id);
+  const {
+    data: { courseContentenrolled } = {},
+    isLoading,
+    error,
+    isError,
+  } = useEnroll(id);
+  console.log("loading", isLoading);
+  console.log("loading", isError);
+  console.log("error", error);
 
   const [selectedLesson, setSelectedLesson] = useState({});
   useEffect(() => {
@@ -29,6 +39,32 @@ function CourseContent() {
     <div className="bg-white rounded-xl shadow-lg h-full flex items-center justify-center   ">
       <LoadingComponent size="xl" message="يتم التحميل ..." color="blue" />
     </div>
+  ) : !auth ? (
+    <>
+      <div className="mx-auto confirmCard mt-60">
+        <MessageTitle>تحتاج لتسجيل دخولك اولا!</MessageTitle>
+        <div>
+          <Link to={"/login"} className="btn">
+            تسجيل دخول
+          </Link>
+        </div>
+      </div>
+    </>
+  ) : error ? (
+    <>
+      <div className="mx-auto confirmCard mt-60">
+        <MessageTitle className="mb-4">
+          ليس لديك صلاحية الدخول لهذا الكورس اشتري الكورس اولا ثم ادخل على هذا
+          الرابط!
+        </MessageTitle>
+        <Link
+          className="bg-blue-950 p-2 mt-4 rounded-3xl"
+          to={`/courses/${id}`}
+        >
+          الذهاب لصفحة الشراء
+        </Link>
+      </div>
+    </>
   ) : (
     <>
       <div className="p-4 bg-gray-100 flex items-center">
@@ -56,30 +92,26 @@ function CourseContent() {
       </div>
 
       <div className="flex flex-col md:items-start justify-start items-center bg-gray-100  md:flex-row md:justify-between">
-        {courseContentenrolled || selectedLesson ? (
-          <>
-            {selectedLesson?.url.includes("youtube.com") ? (
-              <YouTubePlayerComponent
-                courseContentenrolled={courseContentenrolled}
-                selectedLesson={selectedLesson}
-                user={user}
-              />
-            ) : (
-              <CourseComponent
-                courseContentenrolled={courseContentenrolled}
-                selectedLesson={selectedLesson}
-                user={user}
-              />
-            )}
-
-            <CourseList
+        <>
+          {selectedLesson?.url.includes("youtube.com") ? (
+            <YouTubePlayerComponent
               courseContentenrolled={courseContentenrolled}
-              setSelectedLesson={setSelectedLesson}
+              selectedLesson={selectedLesson}
+              user={user}
             />
-          </>
-        ) : (
-          <div>You dont have access to get to this course !</div>
-        )}
+          ) : (
+            <CourseComponent
+              courseContentenrolled={courseContentenrolled}
+              selectedLesson={selectedLesson}
+              user={user}
+            />
+          )}
+
+          <CourseList
+            courseContentenrolled={courseContentenrolled}
+            setSelectedLesson={setSelectedLesson}
+          />
+        </>
       </div>
     </>
   );

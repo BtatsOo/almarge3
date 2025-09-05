@@ -35,6 +35,7 @@ export const useEnroll = (id, onSuccessCallBack) => {
     data: { data } = {},
     isLoading,
     isError,
+    error,
   } = useQuery({
     queryKey: ["coursesenroll"],
     queryFn: async () => {
@@ -45,17 +46,21 @@ export const useEnroll = (id, onSuccessCallBack) => {
             withCredentials: true,
           }
         );
-        console.log(res);
+        console.log("res", res);
+        // if(res)
 
         return res;
       } catch (error) {
-        console.log(error);
+        throw new Error(
+          error.response?.data?.message || "Something went wrong"
+        );
       }
     },
     staleTime: 24 * 60 * 60 * 1000,
     onSuccess: onSuccessCallBack,
+    retry: 0,
   });
-  return { data, isLoading, isError };
+  return { data, isLoading, isError, error };
 };
 
 export const useEnrolledCourses = () => {

@@ -370,8 +370,8 @@ export function SuccessOrNotMessage({ success }) {
     </>
   );
 }
-export function MessageTitle({ children }) {
-  return <h1>{children}</h1>;
+export function MessageTitle({ children, className }) {
+  return <h1 className={className}>{children}</h1>;
 }
 export function MessageButton({ children, auth, onClick, className }) {
   return (
