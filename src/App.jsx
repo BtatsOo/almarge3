@@ -31,11 +31,9 @@ function App() {
         {/* <ReactQueryDevtools initialIsOpen={false} /> */}
         <Routes>
           <Route path="/" element={<Homepage />} />
-          <Route path="login">
-            <Route index element={<Login />} /> {/* /login */}
-            <Route path="reset" element={<ResetPassword />} />
-            {/* /login/reset */}
-          </Route>
+          <Route path="/login" element={<Login />} /> {/* /login */}
+          <Route path="reset" element={<ResetPassword />} />
+          {/* /login/reset */}
           {/* عايزين هنا نخلي الصفحة الرئيسية مفهاش القائمة اللي على الشمال ولما تسجل بس تظهر للمسجل دخوله وكمان تخليها تقدر تفتحها وتقفلها  */}{" "}
           <Route path="/" element={<Layout />}>
             <Route path="/browse/" element={<Browse />} />
