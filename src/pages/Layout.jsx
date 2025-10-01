@@ -9,7 +9,7 @@ import { useQueryClient } from "@tanstack/react-query";
 function Layout() {
   const { user = {}, auth } = useAuth();
   const queryclient = useQueryClient();
-  console.log(user);
+
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   const links = [

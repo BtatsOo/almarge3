@@ -17,6 +17,8 @@ import Quiz from "./pages/Quiz";
 import FollowUp from "./pages/FollowUp";
 import Test from "./pages/test";
 import ResetPassword from "./pages/ResetPassword";
+import ResultQuiz from "./pages/ResultQuiz";
+import ReviewSchedule from "./pages/ReviewSchedule";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -43,6 +45,8 @@ function App() {
             <Route path="/my-courses/" element={<MyCourses />} />
             <Route path="/transaction/" element={<Transaction />} />
             <Route path="/certificate/" element={<Result />} />
+            <Route path="/review" element={<ReviewSchedule />} />
+            <Route path="/certificate/:id" element={<ResultQuiz />} />
             <Route path="/courses/:id/quiz/:lessonId" element={<Quiz />} />
             <Route path="/follow-up" element={<FollowUp />} />
             <Route path="/test" element={<Test />} />

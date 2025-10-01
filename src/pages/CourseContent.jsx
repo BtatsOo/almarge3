@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDown, Play, Clock, Users, Star } from "lucide-react";
 import { useAuth, useEnroll } from "../helpers/useauth";
-import { Link, useNavigate, useParams } from "react-router";
+import { Link, useNavigate, useParams, useSearchParams } from "react-router";
 import { LoadingComponent } from "./Loading";
 import axios from "axios";
 import { MessageTitle } from "./CourseOverview";
@@ -13,15 +13,18 @@ function CourseContent() {
   // check auth
   // const { data: { data } = {}, isLoading } = useAuth();
   const { id } = useParams();
+  const [searchParams] = useSearchParams();
+  const lessonid = searchParams.get("lessonid"); // e.g. "John"
+  console.log(lessonid);
   const {
     data: { courseContentenrolled } = {},
     isLoading,
     error,
     isError,
-  } = useEnroll(id);
-  console.log("loading", isLoading);
-  console.log("loading", isError);
-  console.log("error", error);
+  } = useEnroll(id, undefined, lessonid);
+  // console.log("loading", isLoading);
+  // console.log("loading", isError);
+  // console.log("error", error);
 
   const [selectedLesson, setSelectedLesson] = useState({});
   useEffect(() => {

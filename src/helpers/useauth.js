@@ -30,7 +30,7 @@ export const useCourses = () => {
   return { data, isLoading, isError };
 };
 
-export const useEnroll = (id, onSuccessCallBack) => {
+export const useEnroll = (id, onSuccessCallBack, lessonId = undefined) => {
   const {
     data: { data } = {},
     isLoading,
@@ -41,12 +41,14 @@ export const useEnroll = (id, onSuccessCallBack) => {
     queryFn: async () => {
       try {
         const res = await axios.get(
-          `${import.meta.env.VITE_API_URL}/courses/enroll/${id}`,
+          `${import.meta.env.VITE_API_URL}/courses/enroll/${id}${
+            lessonId ? `?lessonid=${lessonId}` : ""
+          }`,
           {
             withCredentials: true,
           }
         );
-        console.log("res", res);
+        // console.log("res", res);
         // if(res)
 
         return res;
