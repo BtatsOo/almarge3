@@ -3,24 +3,6 @@ import { useAuth, useEnrolledCourses } from "../helpers/useauth";
 import { ArrowRight, GraduationCap, Users } from "lucide-react";
 import { editCourses } from "../helpers/auth";
 function EditCourses() {
-  const betaData = {
-    action: "addTopic",
-
-    data: {
-      title: "الحصة السابعة ",
-      description: " ",
-      lessons: [
-        {
-          url: "https://www.youtube.com/embed/p4LusGAL3zI?si=QlrwgLtT9bIYQe5b",
-          title: " شرح  الحصة السابعة",
-          duration: "116",
-          lessonType: "lesson",
-          questions: [],
-          docs: {},
-        },
-      ],
-    },
-  };
   const { user = {}, auth } = useAuth();
   // هخلي الكورسات اللي تظهر اللي الادمن شاريها عندده وهعدل عليها بعدين (الكورسات كلها بالمحتوى  بتاعها المفروض يظهر للادمن بدون شروط )
   const [numLessons, setNumLessons] = useState([""]);

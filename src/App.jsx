@@ -19,7 +19,7 @@ import Test from "./pages/test";
 import ResetPassword from "./pages/ResetPassword";
 import ResultQuiz from "./pages/ResultQuiz";
 import ReviewSchedule from "./pages/ReviewSchedule";
-import EditCourses from "./pages/editCourses";
+import EditCourses from "./pages/EditCourses";
 import LoginAdmin from "./pages/LoginAdmin";
 const queryClient = new QueryClient({
   defaultOptions: {
