@@ -5,26 +5,32 @@ import interactionPlugin from "@fullcalendar/interaction"; // ← important
 import dayjs from "dayjs";
 import { useAuth } from "../helpers/useauth";
 import axios, { Axios } from "axios";
+import { DeleteIcon, Trash2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export default function ReviewSchedule() {
+  const queryClient = useQueryClient();
   const [lessonTitle, setLessonTitle] = useState();
   const [details, setDetails] = useState(false);
   const [startDate, setStartDate] = useState(); //(YYYY-MM-DD)
+  const [error, setError] = useState(); //(YYYY-MM-DD)
+  // const [selectedEvent, setSelectedEvent] = useState(null);
 
   // console.log("eventsbefore", eventsBefore);
   const [events, setEvents] = useState([]);
   // console.log(events);
   const { user = {}, auth } = useAuth();
+  // console.log("userfromuser", events);
   useEffect(() => {
     // console.log("from useEffect", user?.events?.length);
 
     if (user?.events?.length > 0) {
       console.log("from inside if ", user);
       const newReviews = user.events.flatMap((el) => {
-        const reviews = generateReviews(el.date, el.title);
+        const reviews = generateReviews(el.date, el.title, el._id);
         return reviews;
       });
-      setEvents((prev) => [...prev, ...newReviews]);
+      setEvents((prev) => [...newReviews]);
 
       // console.log(newReviews);
     }
@@ -46,18 +52,62 @@ export default function ReviewSchedule() {
           withCredentials: true,
         }
       );
-      console.log(response);
+      console.log(response.data.message);
+      queryClient.setQueryData(["user"], (oldData) => {
+        if (!oldData?.data?.user) return oldData; // safety check
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            user: {
+              ...oldData.data.user,
+              events: response.data.message.events, // <-- only replace events
+            },
+          },
+        };
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
+  async function deleteReq(el, dateStr) {
+    console.log(typeof el._id);
+    try {
+      const response = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/event`,
+        {
+          action: "delete",
+          eventId: el._id,
+        },
+        {
+          withCredentials: true,
+        }
+      );
+      queryClient.setQueryData(["user"], (oldData) => {
+        if (!oldData?.data?.user) return oldData; // safety check
+        return {
+          ...oldData,
+          data: {
+            ...oldData.data,
+            user: {
+              ...oldData.data.user,
+              events: response.data.events.events, // <-- only replace events
+            },
+          },
+        };
+      });
     } catch (error) {
       console.log(error);
     }
   }
   // Function لتوليد المراجعات
-  function generateReviews(startDate, title) {
+  function generateReviews(startDate, title, eventId) {
     const stages = [0, 1, 3, 7, 14, 30, 60, 120];
     if (!title) return;
     return stages.map((days) => ({
-      title: `${title} ${days > 0 ? `(بعد ${days} يوم)` : "(النهاردة)"}`,
+      title: `${title} ${days > 0 ? `(بعد ${days} يوم)  ` : "(النهاردة)"}`,
       date: dayjs(startDate).add(days, "day").format("YYYY-MM-DD"),
+      _id: eventId ? eventId : "",
     }));
   }
 
@@ -66,8 +116,8 @@ export default function ReviewSchedule() {
     // save to server
     const kofta = await saveToServer(startDate, lessonTitle);
     console.log(startDate);
-    const newReviews = generateReviews(startDate, lessonTitle);
-    setEvents((prev) => [...prev, ...newReviews]);
+    // const newReviews = generateReviews(startDate, lessonTitle);
+    // setEvents((prev) => [...prev, ...newReviews]);
   };
 
   return (
@@ -164,15 +214,21 @@ export default function ReviewSchedule() {
                 <h1 className="text-3xl font-bold text-gray-800 mb-6 pb-4 border-b-2 border-indigo-200">
                   {details[0]?.date}
                 </h1>
-                <div className="space-y-3">
+                <div className="space-y-3 flex items-center ">
                   {details.map((el) => {
                     return (
-                      <p
-                        key={el.title}
-                        className="text-gray-700 bg-white rounded-lg px-5 py-3 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200 border border-gray-100"
-                      >
-                        {el.title}
-                      </p>
+                      <div className=" bg-white rounded-lg px-5 py-3 shadow-sm hover:shadow-md hover:scale-[1.02] transition-all duration-200 border border-gray-100 w-full flex items-center justify-between">
+                        <p key={el.title} className="text-gray-700 ">
+                          {el.title}
+                        </p>
+                        <Trash2
+                          onClick={() => {
+                            deleteReq(el);
+                          }}
+                          className="rounded-4xl p-1 border-2 cursor-pointer hover:bg-red-600  transition ease-in-out duration-400 "
+                          size={30}
+                        />
+                      </div>
                     );
                   })}
                 </div>
@@ -184,6 +240,7 @@ export default function ReviewSchedule() {
       ) : (
         <div>يجب عليك تسجيل الدخول اولا!</div>
       )}
+      {error ? <p></p> : ""}
     </>
   );
 }

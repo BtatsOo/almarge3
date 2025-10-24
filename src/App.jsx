@@ -19,6 +19,8 @@ import Test from "./pages/test";
 import ResetPassword from "./pages/ResetPassword";
 import ResultQuiz from "./pages/ResultQuiz";
 import ReviewSchedule from "./pages/ReviewSchedule";
+import EditCourses from "./pages/editCourses";
+import LoginAdmin from "./pages/LoginAdmin";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -34,7 +36,9 @@ function App() {
         <Routes>
           <Route path="/" element={<Homepage />} />
           <Route path="/login" element={<Login />} /> {/* /login */}
-          <Route path="reset" element={<ResetPassword />} />
+          <Route path="/reset" element={<ResetPassword />} />
+          <Route path="/admin/upload" element={<EditCourses />} />
+          <Route path="/admin/login" element={<LoginAdmin />} />
           {/* /login/reset */}
           {/* عايزين هنا نخلي الصفحة الرئيسية مفهاش القائمة اللي على الشمال ولما تسجل بس تظهر للمسجل دخوله وكمان تخليها تقدر تفتحها وتقفلها  */}{" "}
           <Route path="/" element={<Layout />}>

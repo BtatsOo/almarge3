@@ -16,9 +16,9 @@ import { useAuth } from "../helpers/useauth";
 
 export default function ArabicLoginRegister() {
   const [showPassword, setShowPassword] = useState(false);
-  const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [error, setError] = useState("");
   const navigateIfSuccessLogin = useNavigate();
+  const [isRegisterMode, setIsRegisterMode] = useState(false);
   const [formData, setFormData] = useState({
     username: "",
     password: "",

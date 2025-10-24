@@ -2,6 +2,82 @@
 
 import axios from "axios";
 
+// funtcion to add lessons and topic (control panel)
+
+export const editCourses = async (formData, action, numLessons) => {
+  const { topicId, courseData, newTopicTitle } = formData;
+  if (action === "addTopic") {
+    try {
+      const res = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/courses/update-course/${
+          courseData._id
+        }`,
+        {
+          action: "addTopic",
+
+          data: {
+            title: newTopicTitle,
+            description: " ",
+            lessons: numLessons.map((lesson, index) => {
+              return {
+                url: lesson[`newLessonUrl${index + 1}`],
+                title: lesson[`newLessonName${index + 1}`],
+                duration: "0",
+                lessonType: "lesson",
+                questions: [],
+                docs: {},
+              };
+            }),
+          },
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      const { data } = res;
+      console.log(data, "Data");
+      // localStorage.setItem("token", { data }); // Store token in local storage
+
+      return data;
+    } catch (error) {
+      console.error("Authentication error:", error.response.data);
+      throw error.response.data;
+    }
+  } else if (action === "addLesson") {
+    try {
+      const res = await axios.patch(
+        `${import.meta.env.VITE_API_URL}/courses/update-course/${
+          courseData._id
+        }`,
+        {
+          action: "addLesson",
+          topicId: topicId,
+          data: {
+            url: formData.newLessonUrl1,
+            title: formData.newLessonName1,
+            duration: "0",
+            lessonType: "lesson",
+            questions: [],
+            docs: {},
+          },
+        },
+        {
+          withCredentials: true,
+        }
+      );
+
+      const { data } = res;
+      console.log(data, "Data");
+      // localStorage.setItem("token", { data }); // Store token in local storage
+
+      return data;
+    } catch (error) {
+      console.error("Authentication error:", error.response.data);
+      throw error.response.data;
+    }
+  }
+};
 // Function to authenticate user
 export const authenticateUser = async (name, password) => {
   try {
