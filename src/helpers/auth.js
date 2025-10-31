@@ -19,8 +19,24 @@ export const editCourses = async (formData, action, numLessons) => {
             title: newTopicTitle,
             description: " ",
             lessons: numLessons.map((lesson, index) => {
+              const iframeString = lesson[`newLessonUrl${index + 1}`];
+
+              // Extract the URL using regex
+              const match = iframeString.match(/src="([^"]+)"/);
+              let cleanUrl = "";
+
+              if (match && match[1]) {
+                // Get the part before '?'
+                cleanUrl = match[1].split("?")[0];
+              }
+              console.log(cleanUrl);
+              const filteredLessonUrl = lesson[
+                `newLessonUrl${index + 1}`
+              ]?.includes("<iframe")
+                ? cleanUrl
+                : lesson[`newLessonUrl${index + 1}`];
               return {
-                url: lesson[`newLessonUrl${index + 1}`],
+                url: filteredLessonUrl,
                 title: lesson[`newLessonName${index + 1}`],
                 duration: "0",
                 lessonType: "lesson",
@@ -35,16 +51,31 @@ export const editCourses = async (formData, action, numLessons) => {
         }
       );
 
-      const { data } = res;
-      console.log(data, "Data");
+      console.log(res, "Data");
       // localStorage.setItem("token", { data }); // Store token in local storage
 
-      return data;
+      return res;
     } catch (error) {
       console.error("Authentication error:", error.response.data);
       throw error.response.data;
     }
   } else if (action === "addLesson") {
+    const iframeString = formData.newLessonUrl1;
+
+    // Extract the URL using regex
+    const match = iframeString.match(/src="([^"]+)"/);
+    let cleanUrl = "";
+
+    if (match && match[1]) {
+      // Get the part before '?'
+      cleanUrl = match[1].split("?")[0];
+    }
+    const filteredLessonUrlForTopic = formData.newLessonUrl1?.includes(
+      "<iframe"
+    )
+      ? cleanUrl
+      : formData.newLessonUrl1;
+
     try {
       const res = await axios.patch(
         `${import.meta.env.VITE_API_URL}/courses/update-course/${
@@ -54,7 +85,7 @@ export const editCourses = async (formData, action, numLessons) => {
           action: "addLesson",
           topicId: topicId,
           data: {
-            url: formData.newLessonUrl1,
+            url: filteredLessonUrlForTopic,
             title: formData.newLessonName1,
             duration: "0",
             lessonType: "lesson",
@@ -67,11 +98,10 @@ export const editCourses = async (formData, action, numLessons) => {
         }
       );
 
-      const { data } = res;
-      console.log(data, "Data");
+      console.log(res, "Data");
       // localStorage.setItem("token", { data }); // Store token in local storage
 
-      return data;
+      return res;
     } catch (error) {
       console.error("Authentication error:", error.response.data);
       throw error.response.data;

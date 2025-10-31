@@ -16,6 +16,7 @@ function EditCourses() {
     newTopicTitle: "",
     courseData: {},
   });
+  const [response, setResponse] = useState("");
 
   const handleInputChange = (e) => {
     // console.log(e.target.name === "password");
@@ -30,22 +31,34 @@ function EditCourses() {
     e.preventDefault();
     // make lessons in array of objects
 
+    const numLessons2 = numLessons;
+    console.log("numlessons2", numLessons2);
     try {
-      const token = await editCourses(
+      const res = await editCourses(
         formData,
         formData.topicId === "" ? "addTopic" : "addLesson",
         numLessons
       );
-      if (token) {
-        console.log(token);
+      if (res.status === 200) {
+        // console.log(res);
+        setResponse(res);
+
+        setFormData({
+          courseId: "",
+          topicId: "",
+
+          newTopicTitle: "",
+          courseData: {},
+        });
       }
     } catch (error1) {
-      console.log(error1);
+      // console.log(error1);
+      setResponse(error1);
     }
   };
-  console.log(formData);
+  // console.log(formData);
   function getCoursesData(courseId) {
-    console.log("courseId", courseId);
+    // console.log("courseId", courseId);
     const courseData = data.enrolledCourses.filter((crs) => {
       return crs._id === courseId;
     });
@@ -81,6 +94,7 @@ function EditCourses() {
                   onChange={handleInputChange}
                   onClick={() => {
                     getCoursesData(formData.courseId);
+                    setResponse("");
                   }}
                   required
                   className="w-full pr-8 sm:pr-10 pl-4 py-2.5 sm:py-3 border-2 border-gray-200 rounded-xl focus:border-teal-500 focus:outline-none transition-all duration-200 text-right appearance-none cursor-pointer text-sm sm:text-base hover:border-gray-300"
@@ -111,15 +125,23 @@ function EditCourses() {
                   <GraduationCap className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 sm:w-5 h-4 sm:h-5" />
                   <select
                     name="topicId"
+                    onClick={() => {
+                      setResponse("");
+                    }}
                     onChange={handleInputChange}
-                    required
                     className="w-full pr-8 sm:pr-10 pl-4 py-2.5 sm:py-3 border-2 border-gray-200 rounded-xl focus:border-teal-500 focus:outline-none transition-all duration-200 text-right appearance-none cursor-pointer text-sm sm:text-base hover:border-gray-300"
                   >
-                    <option>المواضيع</option>
+                    <option value={""}>المواضيع</option>
                     {formData?.courseData?._id
                       ? formData?.courseData?.content.map((topic) => {
                           return (
-                            <option key={topic._id} value={topic._id}>
+                            <option
+                              onChange={() => {
+                                setResponse("");
+                              }}
+                              key={topic._id}
+                              value={topic._id}
+                            >
                               {topic.title}
                             </option>
                           );
@@ -263,6 +285,17 @@ function EditCourses() {
                 </button>
               </div>
             )}
+            <p
+              className={`text-sm ${
+                response?.status === 200 ? "text-green-600 " : "text-red-600 "
+              }mt-2 mb-0 no-underline`}
+            >
+              {response?.status === 200
+                ? "تم اضافة وحفظ التعديلات ! اوعى تبقى عبيط وتضيفها تاني"
+                : response === ""
+                ? ""
+                : "حدث خطا الرجاء التواصل مع الدعم !"}
+            </p>
           </form>
         </div>
       ) : (
