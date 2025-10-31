@@ -110,7 +110,6 @@ export default function ArabicLoginRegister() {
           formData.class
         );
         if (token) {
-          console.log(token);
           navigateIfSuccessLogin("/browse");
         }
       } catch (error1) {

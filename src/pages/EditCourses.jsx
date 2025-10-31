@@ -6,7 +6,6 @@ function EditCourses() {
   const { user = {}, auth } = useAuth();
   // هخلي الكورسات اللي تظهر اللي الادمن شاريها عندده وهعدل عليها بعدين (الكورسات كلها بالمحتوى  بتاعها المفروض يظهر للادمن بدون شروط )
   const [numLessons, setNumLessons] = useState([""]);
-  console.log(numLessons);
   const { data, isLoading, isError } = useEnrolledCourses();
 
   const [formData, setFormData] = useState({
@@ -31,8 +30,6 @@ function EditCourses() {
     e.preventDefault();
     // make lessons in array of objects
 
-    const numLessons2 = numLessons;
-    console.log("numlessons2", numLessons2);
     try {
       const res = await editCourses(
         formData,
@@ -68,8 +65,7 @@ function EditCourses() {
       ["courseData"]: courseData[0],
     });
   }
-  console.log(data);
-  console.log(formData);
+
   return (
     <>
       {user?.name === "admin" && data?.enrolledCourses.length ? (
