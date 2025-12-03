@@ -20,87 +20,6 @@ const Homepage = () => {
   console.log(auth);
   console.log(data, "courses");
 
-  const courses = [
-    {
-      id: 1,
-      title: "كورس السنة كلها",
-      description:
-        "كورس شامل للثانوية العامة في البرمجة والحاسوب - شرح مفصل لجميع المواضيع",
-      price: "250",
-      originalPrice: "350",
-      duration: "سنة كاملة",
-      instructor: "م/محمد شريف",
-      rating: 4.9,
-      students: 2500,
-      image:
-        "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=400&h=300&fit=crop",
-      color: "from-blue-500 to-blue-700",
-      features: [
-        "شرح مفصل لجميع المواضيع",
-        "حل جميع الأسئلة والتمارين",
-        "امتحانات تجريبية",
-        "متابعة مستمرة",
-        "شهادة إتمام معتمدة",
-      ],
-    },
-    {
-      id: 2,
-      title: "كورس شهر واحد",
-      description: "كورس مكثف لشهر واحد في أساسيات البرمجة للثانوية العامة",
-      price: "80",
-      duration: "شهر واحد",
-      instructor: "م/محمد شريف",
-      rating: 4.7,
-      students: 1200,
-      image:
-        "https://images.unsplash.com/photo-1461749280684-dccba630e2f6?w=400&h=300&fit=crop",
-      color: "from-green-500 to-green-700",
-      features: [
-        "مراجعة سريعة للمنهج",
-        "أهم الأسئلة المتوقعة",
-        "حل نماذج امتحانات",
-        "دعم فني سريع",
-      ],
-    },
-    {
-      id: 3,
-      title: "كورس المراجعة النهائية",
-      description: "مراجعة شاملة قبل الامتحان مع حل أهم الأسئلة المتوقعة",
-      price: "120",
-      duration: "أسبوعين",
-      instructor: "م/محمد شريف",
-      rating: 4.8,
-      students: 800,
-      image:
-        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=300&fit=crop",
-      color: "from-purple-500 to-purple-700",
-      features: [
-        "مراجعة نهائية شاملة",
-        "أسئلة متوقعة",
-        "نصائح للامتحان",
-        "جلسات مباشرة",
-      ],
-    },
-    {
-      id: 4,
-      title: "كورس المراجعة النهائية",
-      description: "مراجعة شاملة قبل الامتحان مع حل أهم الأسئلة المتوقعة",
-      price: "120",
-      duration: "أسبوعين",
-      instructor: "م/محمد شريف",
-      rating: 4.8,
-      students: 800,
-      image:
-        "https://images.unsplash.com/photo-1498050108023-c5249f4df085?w=400&h=300&fit=crop",
-      color: "from-purple-500 to-purple-700",
-      features: [
-        "مراجعة نهائية شاملة",
-        "أسئلة متوقعة",
-        "نصائح للامتحان",
-        "جلسات مباشرة",
-      ],
-    },
-  ];
   // img width and height 400*300
   return (
     <div
@@ -257,9 +176,9 @@ const Homepage = () => {
         <div className="container mx-auto px-4 text-center">
           <h2 className="text-5xl font-bold mb-6">الثانوية بقت اسهل معانا !</h2>
           <p className="text-xl mb-8 max-w-3xl mx-auto">
-            كل اللي محتاجه عشان تتفوق في الثانوية هتلاقيه هنا! من شروحات لمادة
-            الرياضيات إلى تمارين تطبيقية وحلول نموذجية، هنساعدك تذاكر وتفهم كل
-            حاجة بسهولة. انضم لينا دلوقتي وابدأ رحلتك للنجاح!
+            كل اللي محتاجه عشان تتفوق في الثانوية هتلاقيه في منصة المرجع هنا! من
+            شروحات إلى تمارين تطبيقية وحلول نموذجية، هنساعدك تذاكر وتفهم كل حاجة
+            بسهولة. انضم لينا دلوقتي وابدأ رحلتك للنجاح!
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <NavLink

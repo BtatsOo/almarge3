@@ -51,7 +51,7 @@ export const editCourses = async (formData, action, numLessons) => {
         }
       );
 
-      console.log(res, "Data");
+      // console.log(res, "Data");
       // localStorage.setItem("token", { data }); // Store token in local storage
 
       return res;
@@ -98,7 +98,7 @@ export const editCourses = async (formData, action, numLessons) => {
         }
       );
 
-      console.log(res, "Data");
+      // console.log(res, "Data");
       // localStorage.setItem("token", { data }); // Store token in local storage
 
       return res;
